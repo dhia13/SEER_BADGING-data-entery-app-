@@ -1,8 +1,9 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import { QRCodeCanvas } from "qrcode.react";
 import insertData from "../db-api/insertData";
 import getData from "../db-api/getData";
+import ReactToPrint from "react-to-print";
 const AddEnteries = ({ editItem, deleteItem }) => {
   const [id, setId] = useState("");
   const [nom, setNom] = useState("");
@@ -27,6 +28,7 @@ const AddEnteries = ({ editItem, deleteItem }) => {
   const addEntery = () => {
     function isEmailAddress(str) {
       var filter =
+        // eslint-disable-next-line no-useless-escape
         /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
       if (filter.test(str)) {
         return true;
@@ -71,13 +73,73 @@ const AddEnteries = ({ editItem, deleteItem }) => {
   const [size, setSize] = useState(300);
   const [x, setX] = useState(0);
   const [y, setY] = useState(0);
-  const handlePrint = () => {
-    console.log(
-      `handle print Qr in position ${x},${y} in a A4 page with ( 2480 , 3508 ) under construction`
-    );
-  };
+  const componentRef = useRef(null);
+
+  const onBeforeGetContentResolve = useRef(null);
+
+  // eslint-disable-next-line no-unused-vars
+  const [loading, setLoading] = useState(false);
+  const [text, setText] = useState("old boring text");
+
+  const handleAfterPrint = useCallback(() => {
+    console.log("`onAfterPrint` called");
+  }, []);
+
+  const handleBeforePrint = useCallback(() => {
+    console.log("`onBeforePrint` called");
+  }, []);
+
+  const handleOnBeforeGetContent = useCallback(() => {
+    console.log("`onBeforeGetContent` called");
+    setLoading(true);
+    setText("Loading new text...");
+
+    return new Promise((resolve) => {
+      onBeforeGetContentResolve.current = resolve;
+
+      setTimeout(() => {
+        setLoading(false);
+        setText("New, Updated Text!");
+        resolve();
+      }, 2000);
+    });
+  }, [setLoading, setText]);
+
+  React.useEffect(() => {
+    if (
+      text === "New, Updated Text!" &&
+      typeof onBeforeGetContentResolve.current === "function"
+    ) {
+      onBeforeGetContentResolve.current();
+    }
+  }, [text]);
+
+  const reactToPrintContent = useCallback(() => {
+    return componentRef.current;
+  }, []);
+
+  const reactToPrintTrigger = useCallback(() => {
+    // NOTE: could just as easily return <SomeComponent />. Do NOT pass an `onClick` prop
+    // to the root node of the returned component as it will be overwritten.
+
+    // Bad: the `onClick` here will be overwritten by `react-to-print`
+    // return <button onClick={() => alert('This will not work')}>Print this out!</button>;
+
+    // Good
+    return <button>Print using a Functional Component</button>;
+  }, []);
+
   return (
     <div className="w-[calc(100%_-_200px)] h-screen justify-start items-start flex flex-col mt-4">
+      <ReactToPrint
+        content={reactToPrintContent}
+        documentTitle="AwesomeFileName"
+        onAfterPrint={handleAfterPrint}
+        onBeforeGetContent={handleOnBeforeGetContent}
+        onBeforePrint={handleBeforePrint}
+        removeAfterPrint
+        trigger={reactToPrintTrigger}
+      />
       <div className="w-full h-4/6 flex">
         {/* inputs */}
         <div className="flex justify-start items-start  h-full  flex-col flex-wrap w-2/3 shadow-lg m-2 rounded-md ">
@@ -123,6 +185,7 @@ const AddEnteries = ({ editItem, deleteItem }) => {
             <Input value={pay} setValue={setPay} label="Pay" />
           </div>
           <button
+            ref={componentRef}
             onClick={addEntery}
             className="w-[300px] h-[60px] bg-green-300 mx-2 my-1 rounded-md hover:bg-green-500 shadow-lg"
           >
@@ -133,6 +196,7 @@ const AddEnteries = ({ editItem, deleteItem }) => {
         <div className="w-1/3 h-full justify-start items-center flex flex-col shadow-lg my-2 mx-2 rounded-md">
           <div className="min-w-[300px] min-h-[300px] justify-center items-center bg-black flex rounded-md">
             <QRCodeCanvas
+              text={text}
               id="qrCode"
               value={qrData}
               size={size > 300 ? 300 : size}
@@ -168,10 +232,7 @@ const AddEnteries = ({ editItem, deleteItem }) => {
               />
             </div>
           </div>
-          <button
-            className="w-[150px] h-[60px] bg-green-300 hover:bg-green-500 rounded-md shadow-lg m-4"
-            onClick={handlePrint}
-          >
+          <button className="w-[150px] h-[60px] bg-green-300 hover:bg-green-500 rounded-md shadow-lg m-4">
             Print
           </button>
         </div>
