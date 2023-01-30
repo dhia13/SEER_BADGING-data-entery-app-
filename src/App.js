@@ -4,7 +4,7 @@ import AllEnteries from "./pages/AllEnteries";
 function App() {
   const [current, setCurrent] = useState("add");
   return (
-    <div className="flex justify-start items-start w-screen h-screen bg-white">
+    <div className="flex justify-start items-start w-screen h-screen bg-white overflow-hidden">
       {/* add new entery */}
       {/* nav */}
       <div className="w-[200px] h-screen bg-gray-200 shadow-lg mt-4">

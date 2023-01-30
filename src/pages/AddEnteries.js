@@ -6,9 +6,12 @@ import getData from "../db-api/getData";
 const AddEnteries = () => {
   const [id, setId] = useState("");
   const [nom, setNom] = useState("");
+  const [nameErr, setNameErr] = useState(false);
   const [prenom, setPrenom] = useState("");
   const [email, setEmail] = useState("");
+  const [emailErr, setEmailErr] = useState(false);
   const [numero, setPhoneNumber] = useState("");
+  const [numeroErr, setNumeroErr] = useState(false);
   const [fonction, setFonction] = useState("");
   const [etablisement, setEtablisement] = useState("");
   const [adress, setAdress] = useState("");
@@ -22,12 +25,65 @@ const AddEnteries = () => {
   }, []);
   //post
   const addEntery = () => {
-    const AddQuerry = `INSERT INTO Enteries (nom, prenom, numero, email, adress, pay,fonction,etablisement) VALUES ("${nom}","${prenom}","${+numero}","${email}","${adress}","${pay}","${fonction}","${etablisement}")`;
-    // const AddQuerry = `INSERT INTO Enteries (nom, prenom) VALUES ("${nom}","${prenom}")`;
-    insertData(AddQuerry).then((result) => console.log(result));
+    if (nom === "") {
+      setNameErr(true);
+      setTimeout(() => {
+        setNameErr(false);
+      }, 3000);
+    }
+    if (email === "") {
+      setEmailErr(true);
+      setTimeout(() => {
+        setEmailErr(false);
+      }, 3000);
+    }
+    if (numero === "") {
+      setNumeroErr(true);
+      setTimeout(() => {
+        setNumeroErr(false);
+      }, 3000);
+    }
+    if (numero !== "" && email !== "" && nom !== "") {
+      const AddQuerry = `INSERT INTO Enteries (nom, prenom, numero, email, adress, pay,fonction,etablisement) VALUES ("${nom}","${prenom}","${+numero}","${email}","${adress}","${pay}","${fonction}","${etablisement}")`;
+      // const AddQuerry = `INSERT INTO Enteries (nom, prenom) VALUES ("${nom}","${prenom}")`;
+      insertData(AddQuerry).then((result) => console.log(result));
+    }
   };
   //put
+  const [editMenu, setEditMenu] = useState(false);
+  const [editId, setEditId] = useState("");
+  const [editNom, setEditNom] = useState("");
+  const [editPrenom, setEditPrenom] = useState("");
+  const [editEmail, setEditEmail] = useState("");
+  const [editNumero, setEditNumero] = useState("");
+  const [editFonction, setEditFonction] = useState("");
+  const [EditEtablisement, setEditEtablisement] = useState("");
+  const [EditAdress, setEditAdress] = useState("");
+  const [EditPay, setEditPay] = useState("");
+  const editItem = (id) => {
+    setEditMenu(true);
+    getData(`SELECT * FROM Enteries WHERE id = ${id}`).then((result) => {
+      setEditId(result[0].id);
+      setEditNom(result[0].nom);
+      setEditPrenom(result[0].prenom);
+      setEditEmail(result[0].email);
+      setEditNumero(result[0].numero);
+      setEditFonction(result[0].fonction);
+      setEditEtablisement(result[0].etablisement);
+      setEditAdress(result[0].adress);
+      setEditPay(result[0].pay);
+    });
+  };
+  const saveEditItem = (id) => {
+    insertData(
+      `UPDATE Enteries SET nom="${editNom}", prenom="${editPrenom}",email="${editEmail}",numero="${editNumero}",fonction="${editFonction}",etablisement="${EditEtablisement}",adress="${EditAdress}",pay="${EditPay}" WHERE id=${editId}`
+    );
+    setEditMenu(false);
+  };
   //delete
+  const deleteItem = (id) => {
+    insertData(`DELETE FROM Enteries WHERE id = ${id}`);
+  };
   const qrData = {
     nom,
     prenom,
@@ -48,36 +104,141 @@ const AddEnteries = () => {
   };
   return (
     <div className="w-[calc(100%_-_200px)] h-screen justify-start items-start flex flex-col mt-4">
-      <div className="flex justify-start items-start w-full h-1/2">
-        <div></div>
-        <div className="w-1/3 h-full ">
-          <Input value={id} setValue={setId} label="ID" />
-          <Input value={nom} setValue={setNom} label="Nom" />
-          <Input value={prenom} setValue={setPrenom} label="Prenom" />
-          <Input value={email} setValue={setEmail} label="Email" />
-          <Input
-            value={numero}
-            setValue={setPhoneNumber}
-            label="Numero Telephone"
-          />
+      {editMenu && (
+        <div className="w-full h-full absolute top-0 left-0 z-30 justify-center items-center flex">
+          <div
+            className="w-full h-full bg-opacity-50 bg-cyan-400 absolute top-0 left-0 z-30"
+            onClick={() => setEditMenu(false)}
+          ></div>
+          <div className="w-[1000px] h-[800px] bg-white z-30 flex justify-center items-center rounded-md shadow-lg">
+            <div className="flex justify-start items-start  h-full  flex-col flex-wrap w-2/3">
+              <div className="w-[300px] h-[100px]  flex justify-center items-start flex-col mx-2 my-1">
+                <p>Id is Auto Generated</p>
+                <Input
+                  value={editId}
+                  setValue={setEditId}
+                  label="ID"
+                  disable={true}
+                />
+              </div>
+              <div className="w-[300px] h-[100px]  flex justify-center items-start flex-col mx-2 my-1">
+                <Input value={editNom} setValue={setEditNom} label="Nom *" />
+                {nameErr && <p className="text-red-500">Please enter Name</p>}
+              </div>
+              <div className="w-[300px] h-[100px]  flex justify-center items-start flex-col mx-2 my-1">
+                <Input
+                  value={editPrenom}
+                  setValue={setEditPrenom}
+                  label="Prenom"
+                />
+              </div>
+              <div className="w-[300px] h-[100px]  flex justify-center items-start flex-col mx-2 my-1">
+                <Input
+                  value={editEmail}
+                  setValue={setEditEmail}
+                  label="Email *"
+                />
+                {emailErr && (
+                  <p className="text-red-500">Please enter Email </p>
+                )}
+              </div>
+              <div className="w-[300px] h-[100px]  flex justify-center items-start flex-col mx-2 my-1">
+                <Input
+                  value={editNumero}
+                  setValue={setEditNumero}
+                  label="Numero Telephone *"
+                />
+                {numeroErr && (
+                  <p className="text-red-500">Please enter Phone number </p>
+                )}
+              </div>
+              <div className="w-[300px] h-[100px]  flex justify-center items-start flex-col mx-2 my-1">
+                <Input
+                  value={editFonction}
+                  setValue={setEditFonction}
+                  label="Fonction"
+                />
+              </div>
+              <div className="w-[300px] h-[100px]  flex justify-center items-start flex-col mx-2 my-1">
+                <Input
+                  value={EditEtablisement}
+                  setValue={setEditEtablisement}
+                  label="Etablisement"
+                />
+              </div>
+              <div className="w-[300px] h-[100px]  flex justify-center items-start flex-col mx-2 my-1">
+                <Input
+                  value={EditAdress}
+                  setValue={setEditAdress}
+                  label="Adress"
+                />
+              </div>
+              <div className="w-[300px] h-[100px]  flex justify-center items-start flex-col mx-2 my-1">
+                <Input value={EditPay} setValue={setEditPay} label="Pay" />
+              </div>
+              <button
+                onClick={saveEditItem}
+                className="w-[300px] h-[60px] bg-green-300 mx-2 my-1 rounded-md hover:bg-green-500 shadow-lg"
+              >
+                Save
+              </button>
+            </div>
+          </div>
         </div>
-        <div className="w-1/3 h-full">
-          <Input value={fonction} setValue={setFonction} label="Fonction" />
-          <Input
-            value={etablisement}
-            setValue={setEtablisement}
-            label="Etablisement"
-          />
-          <Input value={adress} setValue={setAdress} label="Adress" />
-          <Input value={pay} setValue={setPay} label="Pay" />
+      )}
+      <div className="w-full h-4/6 flex">
+        {/* inputs */}
+        <div className="flex justify-start items-start  h-full  flex-col flex-wrap w-2/3 shadow-lg m-2 rounded-md ">
+          <div className="w-[300px] h-[100px]  flex justify-center items-start flex-col mx-2 my-1">
+            <p>Id is Auto Generated</p>
+            <Input value={id} setValue={setId} label="ID" disable={true} />
+          </div>
+          <div className="w-[300px] h-[100px]  flex justify-center items-start flex-col mx-2 my-1">
+            <Input value={nom} setValue={setNom} label="Nom *" />
+            {nameErr && <p className="text-red-500">Please enter Name</p>}
+          </div>
+          <div className="w-[300px] h-[100px]  flex justify-center items-start flex-col mx-2 my-1">
+            <Input value={prenom} setValue={setPrenom} label="Prenom" />
+          </div>
+          <div className="w-[300px] h-[100px]  flex justify-center items-start flex-col mx-2 my-1">
+            <Input value={email} setValue={setEmail} label="Email *" />
+            {emailErr && <p className="text-red-500">Please enter Email </p>}
+          </div>
+          <div className="w-[300px] h-[100px]  flex justify-center items-start flex-col mx-2 my-1">
+            <Input
+              value={numero}
+              setValue={setPhoneNumber}
+              label="Numero Telephone *"
+            />
+            {numeroErr && (
+              <p className="text-red-500">Please enter Phone number </p>
+            )}
+          </div>
+          <div className="w-[300px] h-[100px]  flex justify-center items-start flex-col mx-2 my-1">
+            <Input value={fonction} setValue={setFonction} label="Fonction" />
+          </div>
+          <div className="w-[300px] h-[100px]  flex justify-center items-start flex-col mx-2 my-1">
+            <Input
+              value={etablisement}
+              setValue={setEtablisement}
+              label="Etablisement"
+            />
+          </div>
+          <div className="w-[300px] h-[100px]  flex justify-center items-start flex-col mx-2 my-1">
+            <Input value={adress} setValue={setAdress} label="Adress" />
+          </div>
+          <div className="w-[300px] h-[100px]  flex justify-center items-start flex-col mx-2 my-1">
+            <Input value={pay} setValue={setPay} label="Pay" />
+          </div>
           <button
             onClick={addEntery}
-            className="w-[300px] h-[60px] bg-green-300 m-4 rounded-md hover:bg-green-500 shadow-lg"
+            className="w-[300px] h-[60px] bg-green-300 mx-2 my-1 rounded-md hover:bg-green-500 shadow-lg"
           >
             Add
           </button>
         </div>
-        <div className="w-1/3 h-full shadow-lg rounded-sm justify-start items-center flex flex-col">
+        {/* Qr s ection */}
+        <div className="w-1/3 h-full justify-start items-center flex flex-col shadow-lg my-2 mx-2 rounded-md">
           <div className="min-w-[300px] min-h-[300px] justify-center items-center bg-black flex rounded-md">
             <QRCodeCanvas
               id="qrCode"
@@ -123,7 +284,8 @@ const AddEnteries = () => {
           </button>
         </div>
       </div>
-      <div className="w-full h-1/2">
+      {/* table */}
+      <div className="w-full h-2/6 overflow-y-scroll shadow-lg my-4 rounded-md">
         <div className="overflow-x-auto">
           <div className="p-1.5 w-full inline-block align-middle">
             <div className="overflow-hidden border rounded-lg">
@@ -229,17 +391,19 @@ const AddEnteries = () => {
                         {row.pay}
                       </td>
                       <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
-                        <a
+                        <button
+                          onClick={() => editItem(row.id)}
                           className="text-green-500 hover:text-green-700"
-                          href="#"
                         >
                           Edit
-                        </a>
+                        </button>
                       </td>
                       <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
-                        <p className="text-red-500 hover:text-red-700 cursor-pointer">
-                          Delete
-                        </p>
+                        <button onClick={() => deleteItem(row.id)}>
+                          <p className="text-red-500 hover:text-red-700 cursor-pointer">
+                            Delete
+                          </p>
+                        </button>
                       </td>
                     </tr>
                   ))}
@@ -255,18 +419,19 @@ const AddEnteries = () => {
 
 export default AddEnteries;
 
-const Input = ({ label, value, setValue }) => {
+const Input = ({ label, value, setValue, disable }) => {
   return (
-    <div className="w-[300px] h-[70px] justify-start items-start flex-col m-4">
+    <div className="w-[300px] h-[70px] justify-start items-start flex-col">
       <div className="w-[300px] h-[30px]">
         <label className="mb-10">{label}</label>
       </div>
       <div className="w-[300px] h-[40px] ">
         <input
+          disabled={disable}
           placeholder={label}
           value={value}
           onChange={(e) => setValue(e.target.value)}
-          className="w-[300px] h-[40px] border border-black"
+          className="w-[300px] h-[40px] border border-black placeholder:px-2"
         />
       </div>
     </div>
