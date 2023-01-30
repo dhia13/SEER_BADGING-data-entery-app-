@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import getData from "../db-api/getData";
 
-const AllEnteries = () => {
+const AllEnteries = ({ editItem, deleteItem }) => {
   const [rowData, setRowData] = useState([]);
 
   useEffect(() => {
@@ -114,14 +114,19 @@ const AllEnteries = () => {
                   {row.pay}
                 </td>
                 <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
-                  <a className="text-green-500 hover:text-green-700" href="#">
+                  <button
+                    onClick={() => editItem(row.id)}
+                    className="text-green-500 hover:text-green-700"
+                  >
                     Edit
-                  </a>
+                  </button>
                 </td>
                 <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
-                  <p className="text-red-500 hover:text-red-700 cursor-pointer">
-                    Delete
-                  </p>
+                  <button onClick={() => deleteItem(row.id)}>
+                    <p className="text-red-500 hover:text-red-700 cursor-pointer">
+                      Delete
+                    </p>
+                  </button>
                 </td>
               </tr>
             ))}

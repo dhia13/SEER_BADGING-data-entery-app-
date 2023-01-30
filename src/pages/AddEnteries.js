@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { QRCodeCanvas } from "qrcode.react";
 import insertData from "../db-api/insertData";
 import getData from "../db-api/getData";
-const AddEnteries = () => {
+const AddEnteries = ({ editItem, deleteItem }) => {
   const [id, setId] = useState("");
   const [nom, setNom] = useState("");
   const [nameErr, setNameErr] = useState(false);
@@ -25,13 +25,20 @@ const AddEnteries = () => {
   }, []);
   //post
   const addEntery = () => {
+    function isEmailAddress(str) {
+      var filter =
+        /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+      if (filter.test(str)) {
+        return true;
+      } else return false;
+    }
     if (nom === "") {
       setNameErr(true);
       setTimeout(() => {
         setNameErr(false);
       }, 3000);
     }
-    if (email === "") {
+    if (!isEmailAddress(email)) {
       setEmailErr(true);
       setTimeout(() => {
         setEmailErr(false);
@@ -43,47 +50,14 @@ const AddEnteries = () => {
         setNumeroErr(false);
       }, 3000);
     }
-    if (numero !== "" && email !== "" && nom !== "") {
+    if (numero !== "" && isEmailAddress(email) && nom !== "") {
       const AddQuerry = `INSERT INTO Enteries (nom, prenom, numero, email, adress, pay,fonction,etablisement) VALUES ("${nom}","${prenom}","${+numero}","${email}","${adress}","${pay}","${fonction}","${etablisement}")`;
       // const AddQuerry = `INSERT INTO Enteries (nom, prenom) VALUES ("${nom}","${prenom}")`;
       insertData(AddQuerry).then((result) => console.log(result));
     }
   };
   //put
-  const [editMenu, setEditMenu] = useState(false);
-  const [editId, setEditId] = useState("");
-  const [editNom, setEditNom] = useState("");
-  const [editPrenom, setEditPrenom] = useState("");
-  const [editEmail, setEditEmail] = useState("");
-  const [editNumero, setEditNumero] = useState("");
-  const [editFonction, setEditFonction] = useState("");
-  const [EditEtablisement, setEditEtablisement] = useState("");
-  const [EditAdress, setEditAdress] = useState("");
-  const [EditPay, setEditPay] = useState("");
-  const editItem = (id) => {
-    setEditMenu(true);
-    getData(`SELECT * FROM Enteries WHERE id = ${id}`).then((result) => {
-      setEditId(result[0].id);
-      setEditNom(result[0].nom);
-      setEditPrenom(result[0].prenom);
-      setEditEmail(result[0].email);
-      setEditNumero(result[0].numero);
-      setEditFonction(result[0].fonction);
-      setEditEtablisement(result[0].etablisement);
-      setEditAdress(result[0].adress);
-      setEditPay(result[0].pay);
-    });
-  };
-  const saveEditItem = (id) => {
-    insertData(
-      `UPDATE Enteries SET nom="${editNom}", prenom="${editPrenom}",email="${editEmail}",numero="${editNumero}",fonction="${editFonction}",etablisement="${EditEtablisement}",adress="${EditAdress}",pay="${EditPay}" WHERE id=${editId}`
-    );
-    setEditMenu(false);
-  };
-  //delete
-  const deleteItem = (id) => {
-    insertData(`DELETE FROM Enteries WHERE id = ${id}`);
-  };
+
   const qrData = {
     nom,
     prenom,
@@ -104,88 +78,6 @@ const AddEnteries = () => {
   };
   return (
     <div className="w-[calc(100%_-_200px)] h-screen justify-start items-start flex flex-col mt-4">
-      {editMenu && (
-        <div className="w-full h-full absolute top-0 left-0 z-30 justify-center items-center flex">
-          <div
-            className="w-full h-full bg-opacity-50 bg-cyan-400 absolute top-0 left-0 z-30"
-            onClick={() => setEditMenu(false)}
-          ></div>
-          <div className="w-[1000px] h-[800px] bg-white z-30 flex justify-center items-center rounded-md shadow-lg">
-            <div className="flex justify-start items-start  h-full  flex-col flex-wrap w-2/3">
-              <div className="w-[300px] h-[100px]  flex justify-center items-start flex-col mx-2 my-1">
-                <p>Id is Auto Generated</p>
-                <Input
-                  value={editId}
-                  setValue={setEditId}
-                  label="ID"
-                  disable={true}
-                />
-              </div>
-              <div className="w-[300px] h-[100px]  flex justify-center items-start flex-col mx-2 my-1">
-                <Input value={editNom} setValue={setEditNom} label="Nom *" />
-                {nameErr && <p className="text-red-500">Please enter Name</p>}
-              </div>
-              <div className="w-[300px] h-[100px]  flex justify-center items-start flex-col mx-2 my-1">
-                <Input
-                  value={editPrenom}
-                  setValue={setEditPrenom}
-                  label="Prenom"
-                />
-              </div>
-              <div className="w-[300px] h-[100px]  flex justify-center items-start flex-col mx-2 my-1">
-                <Input
-                  value={editEmail}
-                  setValue={setEditEmail}
-                  label="Email *"
-                />
-                {emailErr && (
-                  <p className="text-red-500">Please enter Email </p>
-                )}
-              </div>
-              <div className="w-[300px] h-[100px]  flex justify-center items-start flex-col mx-2 my-1">
-                <Input
-                  value={editNumero}
-                  setValue={setEditNumero}
-                  label="Numero Telephone *"
-                />
-                {numeroErr && (
-                  <p className="text-red-500">Please enter Phone number </p>
-                )}
-              </div>
-              <div className="w-[300px] h-[100px]  flex justify-center items-start flex-col mx-2 my-1">
-                <Input
-                  value={editFonction}
-                  setValue={setEditFonction}
-                  label="Fonction"
-                />
-              </div>
-              <div className="w-[300px] h-[100px]  flex justify-center items-start flex-col mx-2 my-1">
-                <Input
-                  value={EditEtablisement}
-                  setValue={setEditEtablisement}
-                  label="Etablisement"
-                />
-              </div>
-              <div className="w-[300px] h-[100px]  flex justify-center items-start flex-col mx-2 my-1">
-                <Input
-                  value={EditAdress}
-                  setValue={setEditAdress}
-                  label="Adress"
-                />
-              </div>
-              <div className="w-[300px] h-[100px]  flex justify-center items-start flex-col mx-2 my-1">
-                <Input value={EditPay} setValue={setEditPay} label="Pay" />
-              </div>
-              <button
-                onClick={saveEditItem}
-                className="w-[300px] h-[60px] bg-green-300 mx-2 my-1 rounded-md hover:bg-green-500 shadow-lg"
-              >
-                Save
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
       <div className="w-full h-4/6 flex">
         {/* inputs */}
         <div className="flex justify-start items-start  h-full  flex-col flex-wrap w-2/3 shadow-lg m-2 rounded-md ">
