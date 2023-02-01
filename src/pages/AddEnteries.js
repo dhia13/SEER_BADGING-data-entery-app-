@@ -24,6 +24,7 @@ const AddEnteries = ({ editItem, deleteItem, openPrintMenu }) => {
   }, []);
   //post
   const addEntery = () => {
+    console.log('add event from')
     function isEmailAddress(str) {
       var filter =
         // eslint-disable-next-line no-useless-escape
