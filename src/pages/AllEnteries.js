@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import { useEffect, useState } from "react";
-import getData from "../db-api/getData";
+import dataCrud from "../db-api/dataCrud";
 
 const AllEnteries = ({ editItem, deleteItem, openPrintMenu }) => {
   const [rowData, setRowData] = useState([]);
@@ -8,10 +8,10 @@ const AllEnteries = ({ editItem, deleteItem, openPrintMenu }) => {
   useEffect(() => {
     if (searshId === "") {
       const getAllQuerry = "SELECT * FROM Enteries ORDER BY id;";
-      getData(getAllQuerry).then((result) => setRowData(result));
+      dataCrud(getAllQuerry).then((result) => setRowData(result));
     } else {
       const getAllQuerry = `SELECT * FROM Enteries Where Id = "${searshId}"`;
-      getData(getAllQuerry).then((result) => setRowData(result));
+      dataCrud(getAllQuerry).then((result) => setRowData(result));
     }
   }, [searshId]);
   return (

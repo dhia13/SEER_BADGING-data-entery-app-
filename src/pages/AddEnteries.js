@@ -1,7 +1,8 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useEffect, useState } from "react";
-import insertData from "../db-api/insertData";
-import getData from "../db-api/getData";
+import Input from "../Components/Input";
+import dataCrud from "../db-api/dataCrud";
+
 const AddEnteries = ({ editItem, deleteItem, openPrintMenu }) => {
   const [id, setId] = useState("");
   const [nom, setNom] = useState("");
@@ -20,11 +21,10 @@ const AddEnteries = ({ editItem, deleteItem, openPrintMenu }) => {
   //get
   useEffect(() => {
     const getAllQuerry = "SELECT * FROM Enteries ORDER BY id DESC LIMIT 10;";
-    getData(getAllQuerry).then((result) => setRowData(result));
+    dataCrud(getAllQuerry).then((result) => setRowData(result));
   }, []);
   //post
   const addEntery = () => {
-    console.log('add event from')
     function isEmailAddress(str) {
       var filter =
         // eslint-disable-next-line no-useless-escape
@@ -52,13 +52,16 @@ const AddEnteries = ({ editItem, deleteItem, openPrintMenu }) => {
       }, 3000);
     }
     if (numero !== "" && isEmailAddress(email) && nom !== "") {
-      const AddQuerry = `INSERT INTO Enteries (nom, prenom, numero, email, adress, pay,fonction,etablisement) VALUES ("${nom}","${prenom}","${+numero}","${email}","${adress}","${pay}","${fonction}","${etablisement}")`;
+      const AddQuerry = `INSERT INTO Enteries (${
+        id !== "" ? "id ," : ""
+      }nom, prenom, numero, email, adress, pay,fonction,etablisement) VALUES (${
+        id !== "" ? `${id} ,` : ""
+      }"${nom}","${prenom}","${+numero}","${email}","${adress}","${pay}","${fonction}","${etablisement}")`;
       // const AddQuerry = `INSERT INTO Enteries (nom, prenom) VALUES ("${nom}","${prenom}")`;
-      insertData(AddQuerry).then((result) => console.log(result));
+      console.log(AddQuerry);
+      dataCrud(AddQuerry).then((result) => console.log(result));
     }
   };
-  //put
-
   return (
     <div className="w-[calc(100%_-_200px)] h-screen justify-start items-start flex flex-col mt-4">
       <div className="w-full h-1/2 flex">
@@ -66,7 +69,7 @@ const AddEnteries = ({ editItem, deleteItem, openPrintMenu }) => {
         <div className="flex justify-start items-start  h-full  flex-col flex-wrap w-full shadow-lg m-2 rounded-md ">
           <div className="w-[300px] h-[100px]  flex justify-center items-start flex-col mx-2 my-1">
             <p>Id is Auto Generated</p>
-            <Input value={id} setValue={setId} label="ID" disable={true} />
+            <Input value={id} setValue={setId} label="ID" disable={false} />
           </div>
           <div className="w-[300px] h-[100px]  flex justify-center items-start flex-col mx-2 my-1">
             <Input value={nom} setValue={setNom} label="Nom *" />
@@ -112,55 +115,6 @@ const AddEnteries = ({ editItem, deleteItem, openPrintMenu }) => {
             Add
           </button>
         </div>
-        {/* Qr s ection */}
-        {/* <div className="w-1/3 h-full justify-start items-center flex flex-col shadow-lg my-2 mx-2 rounded-md">
-          <QRCodeCanvas
-            text={text}
-            id="qrCode"
-            value={JSON.stringify(qrData)}
-            size={300}
-            bgColor={"white"}
-            level={"H"}
-            className="m-2"
-          />
-          <div className="flex gap-4 justify-center items-center m-2">
-            <p>Dimentions</p>
-            <input
-              value={size}
-              onChange={(e) => setSize(e.target.value)}
-              className="h-[40px] w-[70px] rounded-md flex justify-center items-center border border-black"
-            />
-            <p>cm</p>
-          </div>
-          <p>Position</p>
-          <div className="flex gap-4">
-            <div className="flex gap-4 justify-center items-center">
-              <p>X</p>
-              <input
-                value={x}
-                onChange={(e) => setX(e.target.value)}
-                className="h-[40px] w-[70px] rounded-md border border-black"
-              />
-            </div>
-            <div className="flex gap-4 justify-center items-center">
-              <p>Y</p>
-              <input
-                value={y}
-                onChange={(e) => setY(e.target.value)}
-                className="h-[40px] w-[70px] rounded-md border border-black"
-              />
-            </div>
-          </div>
-          <ReactToPrint
-            content={reactToPrintContent}
-            documentTitle="AwesomeFileName"
-            onAfterPrint={handleAfterPrint}
-            onBeforeGetContent={handleOnBeforeGetContent}
-            onBeforePrint={handleBeforePrint}
-            removeAfterPrint
-            trigger={reactToPrintTrigger}
-          />
-        </div> */}
       </div>
       {/* table */}
       <div className="w-full h-1/2 overflow-y-scroll shadow-lg my-4 rounded-md">
@@ -310,21 +264,54 @@ const AddEnteries = ({ editItem, deleteItem, openPrintMenu }) => {
 
 export default AddEnteries;
 
-const Input = ({ label, value, setValue, disable }) => {
-  return (
-    <div className="w-[300px] h-[70px] justify-start items-start flex-col">
-      <div className="w-[300px] h-[30px]">
-        <label className="mb-10">{label}</label>
-      </div>
-      <div className="w-[300px] h-[40px] ">
-        <input
-          disabled={disable}
-          placeholder={label}
-          value={value}
-          onChange={(e) => setValue(e.target.value)}
-          className="w-[300px] h-[40px] border border-black placeholder:px-2"
-        />
-      </div>
-    </div>
-  );
-};
+// eslint-disable-next-line no-lone-blocks
+{
+  /* <div className="w-1/3 h-full justify-start items-center flex flex-col shadow-lg my-2 mx-2 rounded-md">
+          <QRCodeCanvas
+            text={text}
+            id="qrCode"
+            value={JSON.stringify(qrData)}
+            size={300}
+            bgColor={"white"}
+            level={"H"}
+            className="m-2"
+          />
+          <div className="flex gap-4 justify-center items-center m-2">
+            <p>Dimentions</p>
+            <input
+              value={size}
+              onChange={(e) => setSize(e.target.value)}
+              className="h-[40px] w-[70px] rounded-md flex justify-center items-center border border-black"
+            />
+            <p>cm</p>
+          </div>
+          <p>Position</p>
+          <div className="flex gap-4">
+            <div className="flex gap-4 justify-center items-center">
+              <p>X</p>
+              <input
+                value={x}
+                onChange={(e) => setX(e.target.value)}
+                className="h-[40px] w-[70px] rounded-md border border-black"
+              />
+            </div>
+            <div className="flex gap-4 justify-center items-center">
+              <p>Y</p>
+              <input
+                value={y}
+                onChange={(e) => setY(e.target.value)}
+                className="h-[40px] w-[70px] rounded-md border border-black"
+              />
+            </div>
+          </div>
+          <ReactToPrint
+            content={reactToPrintContent}
+            documentTitle="AwesomeFileName"
+            onAfterPrint={handleAfterPrint}
+            onBeforeGetContent={handleOnBeforeGetContent}
+            onBeforePrint={handleBeforePrint}
+            removeAfterPrint
+            trigger={reactToPrintTrigger}
+          />
+        </div> */
+}

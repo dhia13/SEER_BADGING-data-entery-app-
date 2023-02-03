@@ -1,11 +1,11 @@
 const electron = window.require("electron");
 const { ipcRenderer } = electron;
 
-export default function getData(message) {
+export default function dataCrud(message) {
   return new Promise((resolve) => {
-    ipcRenderer.once("get-data", (_, arg) => {
+    ipcRenderer.once("data-crud", (_, arg) => {
       resolve(arg);
     });
-    ipcRenderer.send("get-data", message);
+    ipcRenderer.send("data-crud", message);
   });
 }
