@@ -109,16 +109,16 @@ function App() {
         {/* nav */}
         <div className="w-[200px] h-screen bg-gray-200 shadow-lg">
           <div
-            className={`w-[200px] h-[60px]  border-b border-b-black cursor-pointer hover:bg-gray-600 justify-center items-center flex ${
-              current === "add" ? "bg-gray-700" : "bg-gray-500"
+            className={`w-[200px] h-[60px] cursor-pointer hover:bg-cyan-400 justify-center items-center flex ${
+              current === "add" ? "bg-cyan-500" : "bg-cyan-300"
             }`}
             onClick={() => setCurrent("add")}
           >
             <p className="text-white">Add new Entery</p>
           </div>
           <div
-            className={`w-[200px] h-[60px]  border-b border-b-black cursor-pointer hover:bg-gray-600 justify-center items-center flex ${
-              current === "all" ? "bg-gray-700" : "bg-gray-500"
+            className={`w-[200px] h-[60px] cursor-pointer hover:bg-cyan-400 justify-center items-center flex ${
+              current === "all" ? "bg-cyan-500" : "bg-cyan-300"
             }`}
             onClick={() => setCurrent("all")}
           >
@@ -162,7 +162,6 @@ function App() {
               <div className="flex justify-center items-center flex-col z-30">
                 {/* userData display */}
                 <div className="px-4 py-2 shadow-md rounded-sm bg-white my-2 w-[300px]">
-                  <h1>User data</h1>
                   <p>id :{userData.id}</p>
                   <p>Nom :{userData.nom}</p>
                   <p>Prenom :{userData.prenom}</p>

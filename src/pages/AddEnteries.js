@@ -110,9 +110,11 @@ const AddEnteries = ({ editItem, deleteItem, openPrintMenu }) => {
           </div>
           <button
             onClick={addEntery}
-            className="w-[300px] h-[60px] bg-green-300 mx-2 my-1 rounded-md hover:bg-green-500 shadow-lg"
+            className="w-[300px] h-[50px] bg-green-300 mx-2 my-1 rounded-md hover:bg-green-500 shadow-lg"
           >
-            Add
+            <p className="text-lg font-semibold text-black hover:text-white">
+              ADD
+            </p>
           </button>
         </div>
       </div>
@@ -134,7 +136,7 @@ const AddEnteries = ({ editItem, deleteItem, openPrintMenu }) => {
                       scope="col"
                       className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase "
                     >
-                      Nom
+                      Nom *
                     </th>
                     <th
                       scope="col"
@@ -146,13 +148,13 @@ const AddEnteries = ({ editItem, deleteItem, openPrintMenu }) => {
                       scope="col"
                       className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase "
                     >
-                      Email
+                      Email *
                     </th>
                     <th
                       scope="col"
                       className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase "
                     >
-                      Numero
+                      Numero *
                     </th>
                     <th
                       scope="col"
@@ -180,19 +182,19 @@ const AddEnteries = ({ editItem, deleteItem, openPrintMenu }) => {
                     </th>
                     <th
                       scope="col"
-                      className="px-6 py-3 text-xs font-bold text-right text-gray-500 uppercase "
+                      className="px-6 py-3 text-xs font-bold text-right text-blue-500 uppercase "
                     >
                       Edit
                     </th>
                     <th
                       scope="col"
-                      className="px-6 py-3 text-xs font-bold text-right text-gray-500 uppercase "
+                      className="px-6 py-3 text-xs font-bold text-right text-red-500 uppercase "
                     >
                       Delete
                     </th>
                     <th
                       scope="col"
-                      className="px-6 py-3 text-xs font-bold text-right text-gray-500 uppercase "
+                      className="px-6 py-3 text-xs font-bold text-right text-green-500 uppercase "
                     >
                       Print QR
                     </th>
@@ -231,7 +233,7 @@ const AddEnteries = ({ editItem, deleteItem, openPrintMenu }) => {
                       <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
                         <button
                           onClick={() => editItem(row.id)}
-                          className="text-green-500 hover:text-green-700"
+                          className="text-blue-500 hover:text-blue-700"
                         >
                           Edit
                         </button>
@@ -245,7 +247,7 @@ const AddEnteries = ({ editItem, deleteItem, openPrintMenu }) => {
                       </td>
                       <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
                         <button onClick={() => openPrintMenu(row.id)}>
-                          <p className="text-red-500 hover:text-red-700 cursor-pointer">
+                          <p className="text-green-400 hover:text-green-600 cursor-pointer">
                             Print
                           </p>
                         </button>

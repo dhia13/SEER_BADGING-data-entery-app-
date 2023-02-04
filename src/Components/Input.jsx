@@ -1,6 +1,6 @@
 const Input = ({ label, value, setValue, disable }) => {
   return (
-    <div className="w-[300px] h-[70px] justify-start items-start flex-col">
+    <div className="w-[300px] h-[70px] justify-start items-start flex-col rounded-md">
       <div className="w-[300px] h-[30px]">
         <label className="mb-10">{label}</label>
       </div>
