@@ -1,19 +1,18 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import { useEffect, useState } from "react";
-import getData from "../db-api/getData";
-
-const AllEnteries = ({ editItem, deleteItem, openPrintMenu }) => {
+import { dataCrud, sendExcel } from "../db-api/dataCrud";
+const AllEnteries = ({ editItem, deleteItem, openPrintMenu, editReload }) => {
   const [rowData, setRowData] = useState([]);
   const [searshId, setSearshId] = useState("");
   useEffect(() => {
     if (searshId === "") {
       const getAllQuerry = "SELECT * FROM Enteries ORDER BY id;";
-      getData(getAllQuerry).then((result) => setRowData(result));
+      dataCrud(getAllQuerry).then((result) => setRowData(result));
     } else {
       const getAllQuerry = `SELECT * FROM Enteries Where Id = "${searshId}"`;
-      getData(getAllQuerry).then((result) => setRowData(result));
+      dataCrud(getAllQuerry).then((result) => setRowData(result));
     }
-  }, [searshId]);
+  }, [searshId, editReload]);
   return (
     <div className="justify-center items-center w-[calc(100%_-_200px)] h-screen bg-white">
       <div className="w-full justify-center items-center flex my-2 ">
@@ -40,6 +39,12 @@ const AllEnteries = ({ editItem, deleteItem, openPrintMenu }) => {
               placeholder="Search"
               className="w-full py-3 pl-12 pr-4 text-gray-500 border shadow-md rounded-md outline-none bg-gray-50 focus:bg-white focus:border-indigo-600"
             />
+            <div
+              className="absolute top-0 bottom-0 w-24 h-10 my-auto text-cyan-600 hover:text-cyan-700 right-3 justify-center items-center flex cursor-pointer"
+              onClick={() => sendExcel(rowData)}
+            >
+              Export data
+            </div>
           </div>
         </form>
       </div>
@@ -57,7 +62,7 @@ const AllEnteries = ({ editItem, deleteItem, openPrintMenu }) => {
                 scope="col"
                 className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase "
               >
-                Nom
+                Nom *
               </th>
               <th
                 scope="col"
@@ -69,13 +74,13 @@ const AllEnteries = ({ editItem, deleteItem, openPrintMenu }) => {
                 scope="col"
                 className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase "
               >
-                Email
+                Email *
               </th>
               <th
                 scope="col"
                 className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase "
               >
-                Numero
+                Numero *
               </th>
               <th
                 scope="col"
@@ -103,19 +108,19 @@ const AllEnteries = ({ editItem, deleteItem, openPrintMenu }) => {
               </th>
               <th
                 scope="col"
-                className="px-6 py-3 text-xs font-bold text-right text-gray-500 uppercase "
+                className="px-6 py-3 text-xs font-bold text-right text-blue-500 uppercase "
               >
                 Edit
               </th>
               <th
                 scope="col"
-                className="px-6 py-3 text-xs font-bold text-right text-gray-500 uppercase "
+                className="px-6 py-3 text-xs font-bold text-right text-red-500 uppercase "
               >
                 Delete
               </th>
               <th
                 scope="col"
-                className="px-6 py-3 text-xs font-bold text-right text-gray-500 uppercase "
+                className="px-6 py-3 text-xs font-bold text-right text-green-500 uppercase "
               >
                 Print QR
               </th>
@@ -154,7 +159,7 @@ const AllEnteries = ({ editItem, deleteItem, openPrintMenu }) => {
                 <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
                   <button
                     onClick={() => editItem(row.id)}
-                    className="text-green-500 hover:text-green-700"
+                    className="text-blue-500 hover:text-blue-700"
                   >
                     Edit
                   </button>
@@ -168,7 +173,7 @@ const AllEnteries = ({ editItem, deleteItem, openPrintMenu }) => {
                 </td>
                 <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
                   <button onClick={() => openPrintMenu(row.id)}>
-                    <p className="text-red-500 hover:text-red-700 cursor-pointer">
+                    <p className="text-green-400 hover:text-green-600 cursor-pointer">
                       Print
                     </p>
                   </button>

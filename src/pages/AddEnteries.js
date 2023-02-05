@@ -1,8 +1,9 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useEffect, useState } from "react";
-import insertData from "../db-api/insertData";
-import getData from "../db-api/getData";
-const AddEnteries = ({ editItem, deleteItem, openPrintMenu }) => {
+import Input from "../Components/Input";
+import { dataCrud } from "../db-api/dataCrud";
+
+const AddEnteries = ({ editItem, deleteItem, openPrintMenu, editReload }) => {
   const [id, setId] = useState("");
   const [nom, setNom] = useState("");
   const [nameErr, setNameErr] = useState(false);
@@ -16,12 +17,16 @@ const AddEnteries = ({ editItem, deleteItem, openPrintMenu }) => {
   const [adress, setAdress] = useState("");
   const [pay, setPay] = useState("");
   const [rowData, setRowData] = useState([]);
+  const [reload, setReload] = useState(true);
   // Crud Operations
   //get
   useEffect(() => {
-    const getAllQuerry = "SELECT * FROM Enteries ORDER BY id DESC LIMIT 10;";
-    getData(getAllQuerry).then((result) => setRowData(result));
-  }, []);
+    console.log("reload");
+    const getAllQuerry = "SELECT * FROM Enteries ORDER BY id DESC LIMIT 10";
+    dataCrud(getAllQuerry).then((result) => setRowData(result));
+  }, [reload, editReload]);
+  console.log("data", rowData);
+  console.log("edit reload", editReload);
   //post
   const addEntery = () => {
     function isEmailAddress(str) {
@@ -51,13 +56,15 @@ const AddEnteries = ({ editItem, deleteItem, openPrintMenu }) => {
       }, 3000);
     }
     if (numero !== "" && isEmailAddress(email) && nom !== "") {
-      const AddQuerry = `INSERT INTO Enteries (nom, prenom, numero, email, adress, pay,fonction,etablisement) VALUES ("${nom}","${prenom}","${+numero}","${email}","${adress}","${pay}","${fonction}","${etablisement}")`;
+      const AddQuerry = `INSERT INTO Enteries (${
+        id !== "" ? "id ," : ""
+      }nom, prenom, numero, email, adress, pay,fonction,etablisement) VALUES (${
+        id !== "" ? `${id} ,` : ""
+      }"${nom}","${prenom}","${+numero}","${email}","${adress}","${pay}","${fonction}","${etablisement}")`;
       // const AddQuerry = `INSERT INTO Enteries (nom, prenom) VALUES ("${nom}","${prenom}")`;
-      insertData(AddQuerry).then((result) => console.log(result));
+      dataCrud(AddQuerry).then((result) => setReload(!reload));
     }
   };
-  //put
-
   return (
     <div className="w-[calc(100%_-_200px)] h-screen justify-start items-start flex flex-col mt-4">
       <div className="w-full h-1/2 flex">
@@ -65,7 +72,7 @@ const AddEnteries = ({ editItem, deleteItem, openPrintMenu }) => {
         <div className="flex justify-start items-start  h-full  flex-col flex-wrap w-full shadow-lg m-2 rounded-md ">
           <div className="w-[300px] h-[100px]  flex justify-center items-start flex-col mx-2 my-1">
             <p>Id is Auto Generated</p>
-            <Input value={id} setValue={setId} label="ID" disable={true} />
+            <Input value={id} setValue={setId} label="ID" disable={false} />
           </div>
           <div className="w-[300px] h-[100px]  flex justify-center items-start flex-col mx-2 my-1">
             <Input value={nom} setValue={setNom} label="Nom *" />
@@ -106,60 +113,13 @@ const AddEnteries = ({ editItem, deleteItem, openPrintMenu }) => {
           </div>
           <button
             onClick={addEntery}
-            className="w-[300px] h-[60px] bg-green-300 mx-2 my-1 rounded-md hover:bg-green-500 shadow-lg"
+            className="w-[300px] h-[50px] bg-green-300 mx-2 my-1 rounded-md hover:bg-green-500 shadow-lg"
           >
-            Add
+            <p className="text-lg font-semibold text-black hover:text-white">
+              ADD
+            </p>
           </button>
         </div>
-        {/* Qr s ection */}
-        {/* <div className="w-1/3 h-full justify-start items-center flex flex-col shadow-lg my-2 mx-2 rounded-md">
-          <QRCodeCanvas
-            text={text}
-            id="qrCode"
-            value={JSON.stringify(qrData)}
-            size={300}
-            bgColor={"white"}
-            level={"H"}
-            className="m-2"
-          />
-          <div className="flex gap-4 justify-center items-center m-2">
-            <p>Dimentions</p>
-            <input
-              value={size}
-              onChange={(e) => setSize(e.target.value)}
-              className="h-[40px] w-[70px] rounded-md flex justify-center items-center border border-black"
-            />
-            <p>cm</p>
-          </div>
-          <p>Position</p>
-          <div className="flex gap-4">
-            <div className="flex gap-4 justify-center items-center">
-              <p>X</p>
-              <input
-                value={x}
-                onChange={(e) => setX(e.target.value)}
-                className="h-[40px] w-[70px] rounded-md border border-black"
-              />
-            </div>
-            <div className="flex gap-4 justify-center items-center">
-              <p>Y</p>
-              <input
-                value={y}
-                onChange={(e) => setY(e.target.value)}
-                className="h-[40px] w-[70px] rounded-md border border-black"
-              />
-            </div>
-          </div>
-          <ReactToPrint
-            content={reactToPrintContent}
-            documentTitle="AwesomeFileName"
-            onAfterPrint={handleAfterPrint}
-            onBeforeGetContent={handleOnBeforeGetContent}
-            onBeforePrint={handleBeforePrint}
-            removeAfterPrint
-            trigger={reactToPrintTrigger}
-          />
-        </div> */}
       </div>
       {/* table */}
       <div className="w-full h-1/2 overflow-y-scroll shadow-lg my-4 rounded-md">
@@ -179,7 +139,7 @@ const AddEnteries = ({ editItem, deleteItem, openPrintMenu }) => {
                       scope="col"
                       className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase "
                     >
-                      Nom
+                      Nom *
                     </th>
                     <th
                       scope="col"
@@ -191,13 +151,13 @@ const AddEnteries = ({ editItem, deleteItem, openPrintMenu }) => {
                       scope="col"
                       className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase "
                     >
-                      Email
+                      Email *
                     </th>
                     <th
                       scope="col"
                       className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase "
                     >
-                      Numero
+                      Numero *
                     </th>
                     <th
                       scope="col"
@@ -225,19 +185,19 @@ const AddEnteries = ({ editItem, deleteItem, openPrintMenu }) => {
                     </th>
                     <th
                       scope="col"
-                      className="px-6 py-3 text-xs font-bold text-right text-gray-500 uppercase "
+                      className="px-6 py-3 text-xs font-bold text-right text-blue-500 uppercase "
                     >
                       Edit
                     </th>
                     <th
                       scope="col"
-                      className="px-6 py-3 text-xs font-bold text-right text-gray-500 uppercase "
+                      className="px-6 py-3 text-xs font-bold text-right text-red-500 uppercase "
                     >
                       Delete
                     </th>
                     <th
                       scope="col"
-                      className="px-6 py-3 text-xs font-bold text-right text-gray-500 uppercase "
+                      className="px-6 py-3 text-xs font-bold text-right text-green-500 uppercase "
                     >
                       Print QR
                     </th>
@@ -276,7 +236,7 @@ const AddEnteries = ({ editItem, deleteItem, openPrintMenu }) => {
                       <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
                         <button
                           onClick={() => editItem(row.id)}
-                          className="text-green-500 hover:text-green-700"
+                          className="text-blue-500 hover:text-blue-700"
                         >
                           Edit
                         </button>
@@ -290,7 +250,7 @@ const AddEnteries = ({ editItem, deleteItem, openPrintMenu }) => {
                       </td>
                       <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
                         <button onClick={() => openPrintMenu(row.id)}>
-                          <p className="text-red-500 hover:text-red-700 cursor-pointer">
+                          <p className="text-green-400 hover:text-green-600 cursor-pointer">
                             Print
                           </p>
                         </button>
@@ -308,22 +268,3 @@ const AddEnteries = ({ editItem, deleteItem, openPrintMenu }) => {
 };
 
 export default AddEnteries;
-
-const Input = ({ label, value, setValue, disable }) => {
-  return (
-    <div className="w-[300px] h-[70px] justify-start items-start flex-col">
-      <div className="w-[300px] h-[30px]">
-        <label className="mb-10">{label}</label>
-      </div>
-      <div className="w-[300px] h-[40px] ">
-        <input
-          disabled={disable}
-          placeholder={label}
-          value={value}
-          onChange={(e) => setValue(e.target.value)}
-          className="w-[300px] h-[40px] border border-black placeholder:px-2"
-        />
-      </div>
-    </div>
-  );
-};
