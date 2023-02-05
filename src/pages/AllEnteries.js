@@ -1,8 +1,7 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import { useEffect, useState } from "react";
-import dataCrud from "../db-api/dataCrud";
-import sendExcel from "../db-api/exelData";
-const AllEnteries = ({ editItem, deleteItem, openPrintMenu }) => {
+import { dataCrud, sendExcel } from "../db-api/dataCrud";
+const AllEnteries = ({ editItem, deleteItem, openPrintMenu, editReload }) => {
   const [rowData, setRowData] = useState([]);
   const [searshId, setSearshId] = useState("");
   useEffect(() => {
@@ -13,8 +12,7 @@ const AllEnteries = ({ editItem, deleteItem, openPrintMenu }) => {
       const getAllQuerry = `SELECT * FROM Enteries Where Id = "${searshId}"`;
       dataCrud(getAllQuerry).then((result) => setRowData(result));
     }
-  }, [searshId]);
-  console.log(rowData);
+  }, [searshId, editReload]);
   return (
     <div className="justify-center items-center w-[calc(100%_-_200px)] h-screen bg-white">
       <div className="w-full justify-center items-center flex my-2 ">

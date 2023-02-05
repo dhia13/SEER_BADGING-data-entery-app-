@@ -1,9 +1,9 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useEffect, useState } from "react";
 import Input from "../Components/Input";
-import dataCrud from "../db-api/dataCrud";
+import { dataCrud } from "../db-api/dataCrud";
 
-const AddEnteries = ({ editItem, deleteItem, openPrintMenu }) => {
+const AddEnteries = ({ editItem, deleteItem, openPrintMenu, editReload }) => {
   const [id, setId] = useState("");
   const [nom, setNom] = useState("");
   const [nameErr, setNameErr] = useState(false);
@@ -17,12 +17,16 @@ const AddEnteries = ({ editItem, deleteItem, openPrintMenu }) => {
   const [adress, setAdress] = useState("");
   const [pay, setPay] = useState("");
   const [rowData, setRowData] = useState([]);
+  const [reload, setReload] = useState(true);
   // Crud Operations
   //get
   useEffect(() => {
-    const getAllQuerry = "SELECT * FROM Enteries ORDER BY id DESC LIMIT 10;";
+    console.log("reload");
+    const getAllQuerry = "SELECT * FROM Enteries ORDER BY id DESC LIMIT 10";
     dataCrud(getAllQuerry).then((result) => setRowData(result));
-  }, []);
+  }, [reload, editReload]);
+  console.log("data", rowData);
+  console.log("edit reload", editReload);
   //post
   const addEntery = () => {
     function isEmailAddress(str) {
@@ -58,8 +62,7 @@ const AddEnteries = ({ editItem, deleteItem, openPrintMenu }) => {
         id !== "" ? `${id} ,` : ""
       }"${nom}","${prenom}","${+numero}","${email}","${adress}","${pay}","${fonction}","${etablisement}")`;
       // const AddQuerry = `INSERT INTO Enteries (nom, prenom) VALUES ("${nom}","${prenom}")`;
-      console.log(AddQuerry);
-      dataCrud(AddQuerry).then((result) => console.log(result));
+      dataCrud(AddQuerry).then((result) => setReload(!reload));
     }
   };
   return (
@@ -265,55 +268,3 @@ const AddEnteries = ({ editItem, deleteItem, openPrintMenu }) => {
 };
 
 export default AddEnteries;
-
-// eslint-disable-next-line no-lone-blocks
-{
-  /* <div className="w-1/3 h-full justify-start items-center flex flex-col shadow-lg my-2 mx-2 rounded-md">
-          <QRCodeCanvas
-            text={text}
-            id="qrCode"
-            value={JSON.stringify(qrData)}
-            size={300}
-            bgColor={"white"}
-            level={"H"}
-            className="m-2"
-          />
-          <div className="flex gap-4 justify-center items-center m-2">
-            <p>Dimentions</p>
-            <input
-              value={size}
-              onChange={(e) => setSize(e.target.value)}
-              className="h-[40px] w-[70px] rounded-md flex justify-center items-center border border-black"
-            />
-            <p>cm</p>
-          </div>
-          <p>Position</p>
-          <div className="flex gap-4">
-            <div className="flex gap-4 justify-center items-center">
-              <p>X</p>
-              <input
-                value={x}
-                onChange={(e) => setX(e.target.value)}
-                className="h-[40px] w-[70px] rounded-md border border-black"
-              />
-            </div>
-            <div className="flex gap-4 justify-center items-center">
-              <p>Y</p>
-              <input
-                value={y}
-                onChange={(e) => setY(e.target.value)}
-                className="h-[40px] w-[70px] rounded-md border border-black"
-              />
-            </div>
-          </div>
-          <ReactToPrint
-            content={reactToPrintContent}
-            documentTitle="AwesomeFileName"
-            onAfterPrint={handleAfterPrint}
-            onBeforeGetContent={handleOnBeforeGetContent}
-            onBeforePrint={handleBeforePrint}
-            removeAfterPrint
-            trigger={reactToPrintTrigger}
-          />
-        </div> */
-}

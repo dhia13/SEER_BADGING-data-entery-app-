@@ -20,8 +20,8 @@ function createWindow() {
       ? "http://localhost:3000"
       : `file://${path.join(__dirname, "../build/index.html")}`
   );
-  //custom menu
 }
+
 const template = Menu.buildFromTemplate([
   {
     label: "Edit",
@@ -87,7 +87,9 @@ const template = Menu.buildFromTemplate([
     ],
   },
 ]);
-Menu.setApplicationMenu(template);
+if (!isDev) {
+  Menu.setApplicationMenu(template);
+}
 app.whenReady().then(createWindow);
 app.on("window-all-closed", () => {
   if (process.platform !== "darwin") {
@@ -179,6 +181,12 @@ ipcMain.on("data-crud", (event, arg) => {
   const sql = arg;
   database.all(sql, (err, rows) => {
     event.reply("data-crud", (err && err.message) || rows ? rows : "success");
+  });
+});
+ipcMain.on("editDelete", (event, arg) => {
+  const sql = arg;
+  database.all(sql, (err, rows) => {
+    event.reply("editDelete", (err && err.message) || rows ? rows : "success");
   });
 });
 app.on("activate", () => {

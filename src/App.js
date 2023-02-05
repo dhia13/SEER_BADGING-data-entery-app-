@@ -1,7 +1,7 @@
 import { useCallback, useRef, useState } from "react";
 import AddEnteries from "./pages/AddEnteries";
 import AllEnteries from "./pages/AllEnteries";
-import dataCrud from "./db-api/dataCrud";
+import { dataCrud, editDelete } from "./db-api/dataCrud";
 import { QRCodeCanvas } from "qrcode.react";
 // import getSettings from "./db-api/getSettings";
 import ReactToPrint from "react-to-print";
@@ -19,20 +19,6 @@ function App() {
   const [EditEtablisement, setEditEtablisement] = useState("");
   const [EditAdress, setEditAdress] = useState("");
   const [EditPay, setEditPay] = useState("");
-  // const [trial, setTrial] = useState(0);
-  // useEffect(() => {
-  //   getSettings("SELECT * FROM Settings").then((result) =>
-  //     setTrial(result[0].freetrial)
-  //   );
-  // }, []);
-  // console.log(trial);
-  // setTimeout(() => {
-  //   getSettings(`UPDATE Settings SET freetrial="1" WHERE id=1`);
-  //   getSettings("SELECT * FROM Settings").then((result) =>
-  //     setTrial(result[0].freetrial)
-  //   );
-  // }, 120000);
-  // console.log(trial);
   const editItem = (id) => {
     setEditMenu(true);
     dataCrud(`SELECT * FROM Enteries WHERE id = ${id}`).then((result) => {
@@ -48,14 +34,16 @@ function App() {
     });
   };
   const saveEditItem = (id) => {
-    dataCrud(
+    editDelete(
       `UPDATE Enteries SET nom="${editNom}", prenom="${editPrenom}",email="${editEmail}",numero="${editNumero}",fonction="${editFonction}",etablisement="${EditEtablisement}",adress="${EditAdress}",pay="${EditPay}" WHERE id=${editId}`
     );
+    setEditReload(!editReload);
     setEditMenu(false);
   };
   //delete
   const deleteItem = (id) => {
-    dataCrud(`DELETE FROM Enteries WHERE id = ${id}`);
+    editDelete(`DELETE FROM Enteries WHERE id = ${id}`);
+    setEditReload(!editReload);
   };
   // print menu
   const [printMenu, setPrintMenu] = useState(false);
@@ -64,6 +52,7 @@ function App() {
   const [x, setX] = useState(5.1);
   const [y, setY] = useState(11.6);
   const componentRef = useRef(null);
+  const [editReload, setEditReload] = useState(false);
   const openPrintMenu = (id) => {
     setPrintMenu(true);
     dataCrud(`SELECT * FROM Enteries WHERE id = ${id}`).then((result) => {
@@ -246,6 +235,7 @@ function App() {
             editItem={editItem}
             deleteItem={deleteItem}
             openPrintMenu={openPrintMenu}
+            editReload={editReload}
           />
         )}
         {current === "all" && (
@@ -253,6 +243,7 @@ function App() {
             editItem={editItem}
             deleteItem={deleteItem}
             openPrintMenu={openPrintMenu}
+            editReload={editReload}
           />
         )}
       </div>
