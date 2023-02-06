@@ -113,7 +113,7 @@ if (isDev) {
 database.serialize(() => {
   database
     .run(
-      "CREATE TABLE IF NOT EXISTS Enteries (id INTEGER PRIMARY KEY,nom TEXT,prenom TEXT,email TEXT,numero INTEGER,fonction TEXT,etablisement TEXT,pay TEXT,adress TEXT)"
+      "CREATE TABLE IF NOT EXISTS Enteries (id INTEGER PRIMARY KEY,nom TEXT,prenom TEXT,email TEXT,numero TEXT,fonction TEXT,etablisement TEXT,pay TEXT,adress TEXT)"
     )
     .run(
       "CREATE TABLE IF NOT EXISTS Settings (id INTEGER PRIMARY KEY,freetrial Text)"

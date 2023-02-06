@@ -21,12 +21,9 @@ const AddEnteries = ({ editItem, deleteItem, openPrintMenu, editReload }) => {
   // Crud Operations
   //get
   useEffect(() => {
-    console.log("reload");
     const getAllQuerry = "SELECT * FROM Enteries ORDER BY id DESC LIMIT 10";
     dataCrud(getAllQuerry).then((result) => setRowData(result));
   }, [reload, editReload]);
-  console.log("data", rowData);
-  console.log("edit reload", editReload);
   //post
   const addEntery = () => {
     function isEmailAddress(str) {
@@ -60,7 +57,7 @@ const AddEnteries = ({ editItem, deleteItem, openPrintMenu, editReload }) => {
         id !== "" ? "id ," : ""
       }nom, prenom, numero, email, adress, pay,fonction,etablisement) VALUES (${
         id !== "" ? `${id} ,` : ""
-      }"${nom}","${prenom}","${+numero}","${email}","${adress}","${pay}","${fonction}","${etablisement}")`;
+      }"${nom}","${prenom}","${numero}","${email}","${adress}","${pay}","${fonction}","${etablisement}")`;
       // const AddQuerry = `INSERT INTO Enteries (nom, prenom) VALUES ("${nom}","${prenom}")`;
       dataCrud(AddQuerry).then((result) => setReload(!reload));
     }

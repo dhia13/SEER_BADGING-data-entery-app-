@@ -3,24 +3,38 @@ import { useEffect, useState } from "react";
 import { dataCrud, sendExcel } from "../db-api/dataCrud";
 const AllEnteries = ({ editItem, deleteItem, openPrintMenu, editReload }) => {
   const [rowData, setRowData] = useState([]);
-  const [searshId, setSearshId] = useState("");
+  const [searshWord, setSearshWord] = useState("");
+  const [searshBy, setSearshBy] = useState("nom");
   useEffect(() => {
-    if (searshId === "") {
+    if (searshWord === "") {
       const getAllQuerry = "SELECT * FROM Enteries ORDER BY id;";
       dataCrud(getAllQuerry).then((result) => setRowData(result));
     } else {
-      const getAllQuerry = `SELECT * FROM Enteries Where Id = "${searshId}"`;
+      const getAllQuerry = `SELECT * FROM Enteries WHERE   ${searshBy} LIKE "%${searshWord}%"`;
       dataCrud(getAllQuerry).then((result) => setRowData(result));
     }
-  }, [searshId, editReload]);
+  }, [searshWord, editReload, searshBy]);
+  console.log(searshBy);
   return (
     <div className="justify-center items-center w-[calc(100%_-_200px)] h-screen bg-white">
       <div className="w-full justify-center items-center flex my-2 ">
         <form className="w-full px-4">
-          <div className="relative">
+          <div className="justify-start items-center flex relative">
+            <select
+              value={searshBy}
+              onChange={(e) => setSearshBy(e.target.value)}
+              className="block text-gray-700 rounded-tl-md rouded-bl-md
+              shadow-md w-[100px] focus:outline-none focus:border-indigo-600
+              h-[50px] bg-gray-50 border-b border-t border-l border-gray-100"
+              name="searsh"
+            >
+              <option value="nom">Nom</option>
+              <option value="id">ID</option>
+              <option value="email">Email</option>
+            </select>
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="absolute top-0 bottom-0 w-6 h-6 my-auto text-gray-400 left-3"
+              className="absolute top-0 bottom-0 w-6 h-6 my-auto text-gray-400 left-[105px]"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -33,11 +47,12 @@ const AllEnteries = ({ editItem, deleteItem, openPrintMenu, editReload }) => {
               />
             </svg>
             <input
-              value={searshId}
-              onChange={(e) => setSearshId(e.target.value)}
+              value={searshWord}
+              onChange={(e) => setSearshWord(e.target.value)}
               type="text"
               placeholder="Search"
-              className="w-full py-3 pl-12 pr-4 text-gray-500 border shadow-md rounded-md outline-none bg-gray-50 focus:bg-white focus:border-indigo-600"
+              className="w-full py-3 pl-12 pr-4 text-gray-500 border shadow-md rounded-tr-md rounded-br-md outline-none bg-gray-50
+               focus:bg-white focus:border-indigo-600"
             />
             <div
               className="absolute top-0 bottom-0 w-24 h-10 my-auto text-cyan-600 hover:text-cyan-700 right-3 justify-center items-center flex cursor-pointer"
