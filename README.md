@@ -1,24 +1,23 @@
-# Getting Started with Create React App
 this is a project made with react and electron to make an app for desktop with the purpose
 of entering event visitor info and then storing thier data and printing qr code on the badge 
 
 Functionality 
 
--Input validation for email and name 
+- Input validation for email and name 
 
--View and searsh db by email name or id
+- View and searsh db by email name or id
 
--print qr Code of any user with thier info
+- Print qr Code of any user with thier info
 
--select the position and dimentions of the qr code to match any badge 
+- Select the position and dimentions of the qr code to match any badge 
 
--export data as excel
+- Export data as excel
 
--sync with other app on different computers via a node server 
+- Sync with other app on different computers via a node server 
 
--cloud backup 
+- Cloud backup 
 
--crud operations
+- Crud operations
 
 Screenshots
 
