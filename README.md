@@ -22,9 +22,7 @@ Functionality
 Screenshots
 
 ![alt text](https://i.postimg.cc/yYGC1Fd4/Edit.png)
-![alt text](https://i.postimg.cc/CRY62M4Y/excel-Export.png))
-![alt text](https://i.postimg.cc/WFQ5ws4B/Qrcode.png)
-![alt text](https://i.postimg.cc/p9Lc2076/Searsh.png)
-![alt text](https://i.postimg.cc/4K2Ln6RN/Seer.png)
-![alt text](https://i.postimg.cc/HcJSMrT0/validation.png)
-![alt text](https://i.postimg.cc/jDXkYV8f/Web.png)
+![alt text](https://i.postimg.cc/HnLFHx1k/Qrcode.png)
+![alt text](https://i.postimg.cc/3wgsFVZY/Searsh.png)
+![alt text](https://i.postimg.cc/d1wzH6Wd/Seer.png)
+![alt text](https://i.postimg.cc/g26FnnXw/excel-Export.png)
